@@ -1,0 +1,173 @@
+/* Selector de avatar — inspirado en Discord, colores HomeTech */
+
+.avatar-picker-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 250;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.avatar-picker-overlay.hidden {
+    display: none;
+}
+
+.avatar-picker-overlay .modal {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin: 0;
+}
+
+.modal-avatar-picker {
+    max-width: 440px;
+    padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.modal-avatar-picker .modal-header {
+    margin-bottom: 1rem;
+}
+
+.modal-avatar-picker .modal-header h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.avatar-picker-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    width: 100%;
+    min-height: 120px;
+    padding: 1.5rem;
+    background: var(--bg-main);
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    font-family: inherit;
+    color: var(--text-secondary);
+}
+
+.avatar-picker-upload:hover {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, var(--bg-main));
+    color: var(--text-primary);
+}
+
+.avatar-picker-upload i {
+    font-size: 2rem;
+    color: var(--color-primary);
+}
+
+.avatar-picker-upload span {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.avatar-picker-upload small {
+    font-size: 0.75rem;
+    opacity: 0.85;
+}
+
+.avatar-historial-seccion {
+    margin-top: 1.5rem;
+}
+
+.avatar-historial-seccion h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.avatar-historial-seccion > p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.85rem;
+}
+
+.avatar-historial-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.avatar-historial-item {
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    border: 3px solid transparent;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--bg-main);
+    transition: border-color 0.2s, transform 0.15s;
+}
+
+.avatar-historial-item:hover {
+    border-color: var(--color-primary);
+    transform: scale(1.05);
+}
+
+.avatar-historial-item.activo {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
+.avatar-historial-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-historial-empty {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 0.5rem 0;
+}
+
+.perfil-avatar-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.perfil-avatar-preview {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.btn-cambiar-foto {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.btn-cambiar-foto:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary-dark);
+}

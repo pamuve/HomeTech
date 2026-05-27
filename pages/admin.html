@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeTech Admin</title>
+    <link rel="icon" type="image/x-icon" href="../assets/hometech-logo.ico">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="logo"><img src="../assets/hometech-logo.ico" alt="HomeTech" class="logo-img"><span>HomeTech</span></div>
+        <div class="search-box">
+            <i class="fi fi-rr-search"></i>
+            <input type="text" id="buscador-global" placeholder="Buscar clientes, servicios...">
+        </div>
+        <div class="user-actions">
+            <button class="icon-btn" id="btn-notif">
+                <i class="fi fi-rr-bell"></i>
+                <span class="badge" id="badge-solicitudes">0</span>
+            </button>
+            <button class="icon-btn" id="btn-mensajes"><i class="fi fi-rr-comment"></i><span class="badge" id="badge-mensajes" style="display:none">0</span></button>
+            <div class="user-avatar"><img id="user-avatar-img" src="" alt="Admin"></div>
+            <button class="icon-btn" onclick="Auth.logout()" title="Cerrar sesión">
+                <i class="fi fi-rr-sign-out-alt"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <nav>
+                <a href="#" class="nav-item active" data-section="dashboard">
+                    <i class="fi fi-sr-home"></i><span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-section="solicitudes">
+                    <i class="fi fi-rr-inbox"></i><span>Solicitudes</span>
+                    <span class="nav-badge" id="nav-badge-solicitudes"></span>
+                </a>
+                <a href="#" class="nav-item" data-section="servicios">
+                    <i class="fi fi-rr-tool-box"></i><span>Servicios</span>
+                </a>
+                <a href="#" class="nav-item" data-section="clientes">
+                    <i class="fi fi-rr-users-alt"></i><span>Clientes</span>
+                </a>
+                <a href="#" class="nav-item" data-section="tecnicos">
+                    <i class="fi fi-rr-id-badge"></i><span>Técnicos</span>
+                </a>
+                <a href="#" class="nav-item" data-section="facturas">
+                    <i class="fi fi-rr-receipt"></i><span>Facturas</span>
+                </a>
+                <a href="#" class="nav-item" data-section="mapa">
+                    <i class="fi fi-rr-marker"></i><span>Mapa/Rutas</span>
+                </a>
+                <a href="#" class="nav-item" data-section="mensajes">
+                    <i class="fi fi-rr-comment"></i><span>Mensajes</span>
+                    <span class="nav-badge" id="nav-badge-mensajes"></span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="content">
+
+            <!-- ==================== DASHBOARD ==================== -->
+            <section id="section-dashboard" class="app-section">
+                <div class="content-header">
+                    <h1 id="fecha-actual">Dashboard</h1>
+                    <div class="header-actions">
+                        <button class="btn-primary" onclick="abrirModal('modal-servicio')">
+                            <i class="fi fi-rr-plus"></i> Nuevo servicio
+                        </button>
+                        <button class="btn-secondary" onclick="navegarA('facturas')">
+                            <i class="fi fi-rr-document"></i> Nueva factura
+                        </button>
+                    </div>
+                </div>
+
+                <div class="kpi-row-4">
+                    <div class="kpi-card-h">
+                        <div class="kpi-icon-h blue"><i class="fi fi-sr-tool-box"></i></div>
+                        <div><span class="kpi-val" id="kpi-hoy">0</span><span class="kpi-lbl">Servicios hoy</span></div>
+                    </div>
+                    <div class="kpi-card-h">
+                        <div class="kpi-icon-h orange"><i class="fi fi-sr-inbox"></i></div>
+                        <div><span class="kpi-val" id="kpi-solicitudes">0</span><span class="kpi-lbl">Solicitudes nuevas</span></div>
+                    </div>
+                    <div class="kpi-card-h">
+                        <div class="kpi-icon-h green"><i class="fi fi-sr-receipt"></i></div>
+                        <div><span class="kpi-val" id="kpi-pendientes">0</span><span class="kpi-lbl">Facturas pendientes</span></div>
+                    </div>
+                    <div class="kpi-card-h">
+                        <div class="kpi-icon-h purple"><i class="fi fi-sr-euro"></i></div>
+                        <div><span class="kpi-val" id="kpi-ingresos">€0</span><span class="kpi-lbl">Ingresos del mes</span></div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <section class="card agenda-card">
+                        <div class="card-header">
+                            <h2>Agenda del día</h2>
+                            <span class="card-action" id="fecha-agenda"></span>
+                        </div>
+                        <div class="timeline-header">
+                            <div class="timeline-slider-wrap">
+                                <input type="range" id="agenda-slider" class="agenda-slider" min="480" max="1080" step="15" value="720" aria-label="Hora del día">
+                                <div class="timeline-track">
+                                    <div class="timeline-fill" id="timeline-fill"></div>
+                                    <div class="timeline-thumb" id="timeline-thumb"></div>
+                                </div>
+                            </div>
+                            <div class="timeline-hours" id="timeline-hours-labels">
+                                <span>08:00</span><span>10:00</span>
+                                <span>12:00</span><span>14:00</span>
+                                <span>16:00</span><span>18:00</span>
+                            </div>
+                            <p class="timeline-selected-label">Hora seleccionada: <strong id="agenda-hora-label">12:00</strong></p>
+                        </div>
+                        <div class="timeline" id="timeline"></div>
+                        <div class="status-filters">
+                            <button class="status-btn status-pending" onclick="filtrarTimeline('pendiente')">
+                                <span class="status-dot"></span> Pendiente
+                            </button>
+                            <button class="status-btn status-progress" onclick="filtrarTimeline('en_curso')">
+                                <span class="status-dot"></span> En curso
+                            </button>
+                            <button class="status-btn status-completed" onclick="filtrarTimeline('completado')">
+                                <span class="status-dot"></span> Completado
+                            </button>
+                            <button class="status-btn" style="background:#f3f4f6;color:#374151" onclick="filtrarTimeline('')">
+                                <span class="status-dot" style="background:#374151"></span> Todos
+                            </button>
+                        </div>
+                    </section>
+
+                    <div class="sidebar-widgets">
+                        <section class="card kpi-card">
+                            <h3>Resumen <i class="fi fi-rr-angle-small-down"></i></h3>
+                            <div class="kpi-grid" id="kpi-resumen"></div>
+                        </section>
+                        <section class="card map-card">
+                            <h3>Técnicos activos <i class="fi fi-rr-angle-small-down"></i></h3>
+                            <div id="tecnicos-activos-list"></div>
+                        </section>
+                    </div>
+                </div>
+
+                <section class="card week-card">
+                    <div class="week-header">
+                        <h3>Próximos 7 días</h3>
+                    </div>
+                    <div class="week-calendar" id="week-calendar"></div>
+                </section>
+            </section>
+
+            <!-- ==================== SOLICITUDES ==================== -->
+            <section id="section-solicitudes" class="app-section hidden">
+                <div class="content-header">
+                    <h1>Solicitudes de servicio</h1>
+                    <div class="header-actions">
+                        <span class="badge-count" id="solicitudes-count"></span>
+                    </div>
+                </div>
+                <div id="lista-solicitudes" class="solicitudes-grid"></div>
+
+                <div class="content-header solicitudes-subsection">
+                    <h1>Solicitudes de alta de trabajadores</h1>
+                    <div class="header-actions">
+                        <span class="badge-count" id="solicitudes-tecnico-count"></span>
+                    </div>
+                </div>
+                <div id="lista-solicitudes-tecnico" class="solicitudes-grid"></div>
+            </section>
+
+            <!-- ==================== SERVICIOS ==================== -->
+            <section id="section-servicios" class="app-section hidden">
+                <div class="content-header">
+                    <h1>Gestión de servicios</h1>
+                    <div class="header-actions">
+                        <select id="filtro-estado-servicio" class="select-filtro" onchange="renderServicios()">
+                            <option value="">Todos los estados</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="en_curso">En curso</option>
+                            <option value="completado">Completado</option>
+                        </select>
+                        <button class="btn-primary" onclick="abrirModal('modal-servicio')">
+                            <i class="fi fi-rr-plus"></i> Nuevo servicio
+                        </button>
+                    </div>
+                </div>
+                <div class="card">
+                    <table class="tabla-datos">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th><th>Tipo</th><th>Técnico</th>
+                                <th>Fecha</th><th>Hora</th><th>Estado</th><th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-servicios"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==================== CLIENTES ==================== -->
+            <section id="section-clientes" class="app-section hidden">
+                <div class="content-header">
+                    <h1>Gestión de clientes</h1>
+                    <div class="header-actions">
+                        <input type="text" class="input-buscar" id="buscar-cliente" placeholder="Buscar cliente..." oninput="renderClientes()">
+                        <button class="btn-primary" onclick="abrirModalCliente()">
+                            <i class="fi fi-rr-plus"></i> Nuevo cliente
+                        </button>
+                    </div>
+                </div>
+                <div class="card">
+                    <table class="tabla-datos">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th><th>Teléfono</th><th>Email</th>
+                                <th>Dirección</th><th>Estado</th><th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-clientes"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==================== TÉCNICOS ==================== -->
+            <section id="section-tecnicos" class="app-section hidden">
+                <div class="content-header">
+                    <h1>Equipo técnico</h1>
+                    <div class="header-actions">
+                        <button class="btn-primary" onclick="abrirModalTecnico()">
+                            <i class="fi fi-rr-plus"></i> Añadir técnico
+                        </button>
+                    </div>
+                </div>
+                <div class="tecnicos-grid" id="tecnicos-grid"></div>
+            </section>
+
+            <!-- ==================== FACTURAS ==================== -->
+            <section id="section-facturas" class="app-section hidden">
+                <div class="content-header">
+                    <h1>Facturas</h1>
+                    <div class="header-actions">
+                        <select id="filtro-estado-factura" class="select-filtro" onchange="renderFacturas()">
+                            <option value="">Todas</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="pagada">Pagada</option>
+                        </select>
+                        <button class="btn-primary" onclick="abrirModalFactura()">
+                            <i class="fi fi-rr-plus"></i> Nueva factura
+                        </button>
+                    </div>
+                </div>
+                <div class="card">
+                    <table class="tabla-datos">
+                        <thead>
+                            <tr>
+                                <th>Número</th><th>Cliente</th><th>Concepto</th>
+                                <th>Fecha</th><th>Importe</th><th>Estado</th><th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-facturas"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==================== MAPA ==================== -->
+            <section id="section-mapa" class="app-section hidden">
+                <div class="content-header">
+                    <h1>Mapa y Rutas</h1>
+                    <div class="header-actions">
+                        <select id="filtro-tecnico-mapa" class="select-filtro" onchange="renderMapa()">
+                            <option value="">Todos los técnicos</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="dashboard-grid">
+                    <section class="card" style="padding:0;overflow:hidden">
+                        <div id="mapa-admin" style="height:500px;width:100%;border-radius:var(--border-radius)"></div>
+                    </section>
+                    <div class="sidebar-widgets">
+                        <section class="card">
+                            <div class="card-header"><h2>Servicios de hoy</h2></div>
+                            <div id="mapa-servicios-hoy"></div>
+                        </section>
+                        <section class="card">
+                            <h3>Ruta sugerida</h3>
+                            <ol id="ruta-sugerida" class="ruta-lista"></ol>
+                        </section>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== MENSAJES ==================== -->
+            <section id="section-mensajes" class="app-section hidden">
+                <div class="content-header">
+                    <h1>Mensajes de clientes</h1>
+                    <div class="header-actions">
+                        <span class="badge-count" id="mensajes-count">0 sin leer</span>
+                    </div>
+                </div>
+                <div id="lista-mensajes-admin" class="solicitudes-grid"></div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ==================== MODALES ==================== -->
+
+    <!-- Modal Servicio -->
+    <div id="modal-servicio" class="modal hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-servicio-titulo">Nuevo servicio</h3>
+                <button class="btn-close" onclick="cerrarModal('modal-servicio')"><i class="fi fi-rr-cross"></i></button>
+            </div>
+            <form id="form-servicio">
+                <input type="hidden" id="sv-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cliente *</label>
+                        <select id="sv-cliente" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Técnico</label>
+                        <select id="sv-tecnico"><option value="">Sin asignar</option></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tipo de servicio *</label>
+                        <select id="sv-tipo" required>
+                            <option value="">Selecciona...</option>
+                            <option>Reparación de ordenadores</option>
+                            <option>Mantenimiento de equipos</option>
+                            <option>Montaje de equipos</option>
+                            <option>Instalación de red</option>
+                            <option>Reparación urgente</option>
+                            <option>Revisión</option>
+                            <option>Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Duración estimada</label>
+                        <select id="sv-duracion">
+                            <option>30min</option><option>1h</option><option>1.5h</option>
+                            <option>2h</option><option>3h</option><option>4h+</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Fecha *</label>
+                        <input type="date" id="sv-fecha" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Hora *</label>
+                        <input type="time" id="sv-hora" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea id="sv-descripcion" rows="3" placeholder="Detalles del trabajo..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select id="sv-estado">
+                        <option value="pendiente">Pendiente</option>
+                        <option value="en_curso">En curso</option>
+                        <option value="completado">Completado</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary btn-full">Guardar servicio</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Cliente -->
+    <div id="modal-cliente" class="modal hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-cliente-titulo">Nuevo cliente</h3>
+                <button class="btn-close" onclick="cerrarModal('modal-cliente')"><i class="fi fi-rr-cross"></i></button>
+            </div>
+            <form id="form-cliente">
+                <input type="hidden" id="cl-id">
+                <div class="form-row">
+                    <div class="form-group"><label>Nombre *</label><input type="text" id="cl-nombre" required></div>
+                    <div class="form-group"><label>Teléfono *</label><input type="tel" id="cl-telefono" required></div>
+                </div>
+                <div class="form-group"><label>Email</label><input type="email" id="cl-email"></div>
+                <div class="form-group"><label>Dirección</label><input type="text" id="cl-direccion"></div>
+                <button type="submit" class="btn-primary btn-full">Guardar cliente</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Técnico -->
+    <div id="modal-tecnico" class="modal hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-tecnico-titulo">Nuevo técnico</h3>
+                <button class="btn-close" onclick="cerrarModal('modal-tecnico')"><i class="fi fi-rr-cross"></i></button>
+            </div>
+            <form id="form-tecnico">
+                <input type="hidden" id="tc-id">
+                <div class="form-row">
+                    <div class="form-group"><label>Nombre *</label><input type="text" id="tc-nombre" required></div>
+                    <div class="form-group"><label>Teléfono *</label><input type="tel" id="tc-telefono" required></div>
+                </div>
+                <div class="form-group">
+                    <label>Especialidad</label>
+                    <select id="tc-especialidad">
+                        <option>Reparación de ordenadores</option><option>Mantenimiento de equipos</option>
+                        <option>Montaje de equipos</option><option>Instalación de red</option><option>General</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary btn-full">Guardar técnico</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Factura -->
+    <div id="modal-factura" class="modal hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-factura-titulo">Nueva factura</h3>
+                <button class="btn-close" onclick="cerrarModal('modal-factura')"><i class="fi fi-rr-cross"></i></button>
+            </div>
+            <form id="form-factura">
+                <input type="hidden" id="fac-id">
+                <div class="form-group"><label>Cliente *</label><select id="fac-cliente" required></select></div>
+                <div class="form-group"><label>Servicio vinculado</label><select id="fac-servicio"><option value="">Sin vincular</option></select></div>
+                <div class="form-group"><label>Concepto *</label><input type="text" id="fac-concepto" required></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Importe (€) *</label><input type="number" id="fac-importe" min="0" step="0.01" required></div>
+                    <div class="form-group"><label>Fecha *</label><input type="date" id="fac-fecha" required></div>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select id="fac-estado">
+                        <option value="pendiente">Pendiente</option>
+                        <option value="pagada">Pagada</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary btn-full">Crear factura</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Asignar Solicitud -->
+    <div id="modal-asignar" class="modal hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Asignar solicitud</h3>
+                <button class="btn-close" onclick="cerrarModal('modal-asignar')"><i class="fi fi-rr-cross"></i></button>
+            </div>
+            <div id="detalle-solicitud" class="detalle-sol"></div>
+            <form id="form-asignar">
+                <input type="hidden" id="asig-sol-id">
+                <div class="form-group">
+                    <label>Técnico asignado *</label>
+                    <select id="asig-tecnico" required></select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Fecha *</label><input type="date" id="asig-fecha" required></div>
+                    <div class="form-group"><label>Hora *</label><input type="time" id="asig-hora" required></div>
+                </div>
+                <button type="submit" class="btn-primary btn-full">
+                    <i class="fi fi-rr-check"></i> Confirmar asignación
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Responder Mensaje -->
+    <div id="modal-responder-mensaje" class="modal hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Responder mensaje</h3>
+                <button class="btn-close" onclick="cerrarModal('modal-responder-mensaje')"><i class="fi fi-rr-cross"></i></button>
+            </div>
+            <div id="resp-mensaje-cliente" class="mensaje-preview-box"></div>
+            <form id="form-responder-mensaje">
+                <input type="hidden" id="resp-mensaje-id">
+                <div class="form-group">
+                    <label>Tu respuesta</label>
+                    <textarea id="resp-mensaje-texto" rows="4" placeholder="Escribe tu respuesta..." required></textarea>
+                </div>
+                <button type="submit" class="btn-primary btn-full"><i class="fi fi-rr-paper-plane"></i> Enviar respuesta</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="overlay" class="overlay hidden" onclick="cerrarTodosModales()"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="../js/store.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>    
+        const _user = Auth.requireRole('admin');
+        if (_user) Auth.inyectarTopbar('user-avatar-img', 'user-nombre');
+    </script>
+    <script src="../js/admin.js"></script>
+
+</body>
+</html>

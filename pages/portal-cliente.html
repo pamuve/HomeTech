@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Portal - HomeTech</title>
+    <link rel="icon" type="image/x-icon" href="../assets/hometech-logo.ico">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="../css/portal.css">
+    <link rel="stylesheet" href="../css/avatar-picker.css">
+</head>
+<body>
+
+    <!-- BARRA SUPERIOR -->
+    <header class="topbar">
+        <div class="topbar-logo">
+            <div class="logo-placeholder">
+                <img src="../assets/hometech-logo.ico" alt="HomeTech" class="logo-img">
+                <span id="nombre-empresa">HomeTech</span>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <button class="icon-btn" id="btn-notificaciones" title="Respuestas nuevas">
+                <i class="fi fi-rr-bell"></i>
+                <span class="badge" id="badge-notif" style="display:none">0</span>
+            </button>
+            <button type="button" class="user-chip user-chip-btn" id="btn-ir-perfil" title="Ver mi perfil">
+                <img src="../assets/avatars/juan.jpg" alt="Avatar" class="user-avatar" id="user-avatar">
+                <span>Hola, <strong id="nombre-cliente">Cliente</strong></span>
+            </button>
+            <button class="icon-btn" onclick="Auth.logout()" title="Cerrar sesión" style="color:var(--text-secondary)">
+                <i class="fi fi-rr-sign-out-alt"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+
+        <!-- BANNER DE BIENVENIDA -->
+        <section class="welcome-banner">
+            <div class="welcome-text">
+                <h1>Bienvenido, <span id="nombre-completo">Cliente</span> 👋</h1>
+                <p>Aquí puedes consultar tus servicios, facturas y próximas citas.</p>
+            </div>
+            <div class="welcome-icon">
+                <i class="fi fi-sr-home"></i>
+            </div>
+        </section>
+
+        <!-- TARJETAS KPI -->
+        <section class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-blue">
+                    <i class="fi fi-sr-tool-box"></i>
+                </div>
+                <div class="kpi-info">
+                    <span class="kpi-value" id="kpi-servicios">0</span>
+                    <span class="kpi-label">Servicios realizados</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-orange">
+                    <i class="fi fi-sr-receipt"></i>
+                </div>
+                <div class="kpi-info">
+                    <span class="kpi-value" id="kpi-facturas">0</span>
+                    <span class="kpi-label">Facturas pendientes</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-green">
+                    <i class="fi fi-sr-calendar"></i>
+                </div>
+                <div class="kpi-info">
+                    <span class="kpi-value" id="kpi-proxima-cita">—</span>
+                    <span class="kpi-label">Próxima cita</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-purple">
+                    <i class="fi fi-sr-euro"></i>
+                </div>
+                <div class="kpi-info">
+                    <span class="kpi-value" id="kpi-importe">€0</span>
+                    <span class="kpi-label">Importe total</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- GRID PRINCIPAL -->
+        <div class="main-grid">
+
+            <!-- COLUMNA IZQUIERDA -->
+            <div class="col-left">
+
+                <!-- PRÓXIMAS CITAS -->
+                <section class="card">
+                    <div class="card-header">
+                        <h2><i class="fi fi-rr-calendar"></i> Mis próximas citas</h2>
+                        <button class="btn-primary" id="btn-nueva-cita">
+                            <i class="fi fi-rr-plus"></i> Solicitar cita
+                        </button>
+                    </div>
+                    <div id="lista-citas">
+                        <!-- Se genera dinámicamente con JS -->
+                    </div>
+                </section>
+
+                <!-- HISTORIAL DE SERVICIOS -->
+                <section class="card">
+                    <div class="card-header">
+                        <h2><i class="fi fi-rr-tool-box"></i> Historial de servicios</h2>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="tabla-servicios">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Descripción</th>
+                                    <th>Técnico</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-servicios-body">
+                                <!-- Se genera dinámicamente con JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- COLUMNA DERECHA -->
+            <div class="col-right">
+
+                <!-- FACTURAS -->
+                <section class="card">
+                    <div class="card-header">
+                        <h2><i class="fi fi-rr-receipt"></i> Mis facturas</h2>
+                    </div>
+                    <div id="lista-facturas">
+                        <!-- Se genera dinámicamente con JS -->
+                    </div>
+                </section>
+
+                <!-- CONTACTAR -->
+                <section class="card card-contacto">
+                    <div class="card-header">
+                        <h2><i class="fi fi-rr-comment"></i> Contactar</h2>
+                    </div>
+                    <div class="contacto-botones">
+                        <a href="tel:+34900000000" class="btn-contacto btn-tel">
+                            <i class="fi fi-rr-phone-call"></i>
+                            Llamar
+                        </a>
+                        <a href="https://wa.me/34600000000" target="_blank" class="btn-contacto btn-whatsapp">
+                            <i class="fi fi-rr-comment"></i>
+                            WhatsApp
+                        </a>
+                    </div>
+                    <form id="form-mensaje" class="form-mensaje">
+                        <label>Envíanos un mensaje rápido</label>
+                        <textarea
+                            id="mensaje-texto"
+                            placeholder="Escribe tu consulta aquí..."
+                            rows="3"
+                        ></textarea>
+                        <button type="submit" class="btn-primary btn-full">
+                            <i class="fi fi-rr-paper-plane"></i> Enviar mensaje
+                        </button>
+                    </form>
+                    <div class="mensajes-historial-wrap">
+                        <div id="lista-mensajes-enviados" class="mensajes-historial-inner"></div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL NUEVA CITA -->
+    <div id="modal-cita" class="modal hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Solicitar nueva cita</h3>
+                <button class="btn-close" id="cerrar-modal">
+                    <i class="fi fi-rr-cross"></i>
+                </button>
+            </div>
+            <form id="form-cita">
+                <div class="form-group">
+                    <label>Tipo de servicio *</label>
+                    <select id="tipo-servicio" required>
+                        <option value="">Selecciona un servicio...</option>
+                        <option value="instalacion">Instalación</option>
+                        <option value="reparacion">Reparación</option>
+                        <option value="mantenimiento">Mantenimiento</option>
+                        <option value="revision">Revisión</option>
+                        <option value="urgencia">Urgencia</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Fecha preferida *</label>
+                    <input type="date" id="fecha-cita" required>
+                </div>
+                <div class="form-group">
+                    <label>Hora preferida *</label>
+                    <input type="time" id="hora-cita" required>
+                </div>
+                <div class="form-group">
+                    <label>Describe el problema o solicitud</label>
+                    <textarea id="notas-cita" placeholder="Cuéntanos qué necesitas..." rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn-primary btn-full">
+                    <i class="fi fi-rr-check"></i> Confirmar solicitud
+                </button>
+            </form>
+        </div>
+    </div>
+    <div id="modal-perfil" class="modal hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Mi perfil</h3>
+                <button class="btn-close" id="cerrar-perfil"><i class="fi fi-rr-cross"></i></button>
+            </div>
+                        <form id="form-perfil-cliente">
+                <div class="perfil-avatar-row">
+                    <img id="perfil-cli-preview" class="perfil-avatar-preview" src="../assets/avatars/juan.jpg" alt="Tu foto">
+                    <button type="button" class="btn-cambiar-foto" id="btn-abrir-avatar-picker">
+                        <i class="fi fi-rr-picture"></i> Cambiar foto
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="perfil-cli-nombre">
+                </div>
+                <div class="form-group">
+                    <label>Dirección</label>
+                    <input type="text" id="perfil-cli-direccion">
+                </div>
+                <button type="submit" class="btn-primary btn-full"><i class="fi fi-rr-check"></i> Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Selector de avatar -->
+    <div id="modal-avatar-picker" class="avatar-picker-overlay hidden">
+        <div class="modal modal-avatar-picker">
+            <div class="modal-header">
+                <h3>Selecciona una imagen</h3>
+                <button type="button" class="btn-close" id="avatar-picker-close"><i class="fi fi-rr-cross"></i></button>
+            </div>
+            <input type="file" id="avatar-file-input" accept="image/*" hidden>
+            <button type="button" class="avatar-picker-upload" id="avatar-picker-upload">
+                <i class="fi fi-rr-cloud-upload"></i>
+                <span>Subir imagen</span>
+                <small>JPG, PNG o WebP · máx. 5 MB</small>
+            </button>
+            <div class="avatar-historial-seccion">
+                <h4>Avatares recientes</h4>
+                <p>Accede a tus 6 fotos de perfil más recientes</p>
+                <div id="avatar-historial-grid" class="avatar-historial-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay" class="overlay hidden"></div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>© 2026 <span id="pie-empresa">HomeTech</span> — Portal del cliente</p>
+    </footer>
+
+    <script src="../js/store.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        // Protege la ruta — solo clientes
+        const _user = Auth.requireRole('cliente');
+        if (_user) Auth.inyectarTopbar('user-avatar', 'nombre-cliente');
+    </script>
+    <script src="../js/avatar-picker.js"></script>
+    <script src="../js/portal-cliente.js"></script>
+
+</body>
+</html>

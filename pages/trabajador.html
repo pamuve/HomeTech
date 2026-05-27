@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeTech — Mi panel</title>
+    <link rel="icon" type="image/x-icon" href="../assets/hometech-logo.ico">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/avatar-picker.css">
+    <style>
+        .trabajo-card { background:var(--bg-card); border-radius:var(--border-radius); padding:1.5rem; border:1px solid var(--border-color); box-shadow:var(--shadow-sm); margin-bottom:1.25rem; border-left:5px solid var(--border-color); transition:all 0.2s; }
+        .trabajo-card.pendiente  { border-left-color:var(--color-warning); }
+        .trabajo-card.en_curso   { border-left-color:var(--color-primary); }
+        .trabajo-card.completado { border-left-color:var(--color-success); opacity:0.75; }
+        .trabajo-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; }
+        .trabajo-hora   { font-size:1.75rem; font-weight:700; color:var(--color-primary); }
+        .trabajo-body p { font-size:0.9rem; margin-bottom:0.4rem; display:flex; align-items:center; gap:0.5rem; color:var(--text-secondary); }
+        .trabajo-body p strong { color:var(--text-primary); }
+        .trabajo-acciones { display:flex; gap:0.75rem; margin-top:1.25rem; flex-wrap:wrap; }
+        .tecnico-selector { padding:2rem; background:var(--bg-card); border-radius:var(--border-radius); border:1px solid var(--border-color); margin-bottom:2rem; }
+        .tecnico-selector select { padding:0.75rem 1rem; border:1px solid var(--border-color); border-radius:8px; font-size:1rem; margin-right:1rem; }
+        .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:2rem; }
+        .stat-card { background:var(--bg-card); border-radius:var(--border-radius); padding:1.25rem; text-align:center; border:1px solid var(--border-color); }
+        .stat-card .num { font-size:2rem; font-weight:700; }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="logo"><img src="../assets/hometech-logo.ico" alt="HomeTech" class="logo-img"><span>HomeTech</span></div>
+        <div class="user-actions">
+            <button class="icon-btn" id="btn-toggle-disponible" title="Cambiar disponibilidad">
+                <i class="fi fi-rr-circle"></i>
+            </button>
+            <div class="user-avatar"><img src="https://i.pravatar.cc/80?u=trabajador" id="avatar-trabajador" alt="Técnico"></div>
+            <button class="icon-btn" onclick="Auth.logout()" title="Cerrar sesión">
+                <i class="fi fi-rr-sign-out-alt"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <nav>
+                <a href="#" class="nav-item active" data-tab="mis-trabajos"><i class="fi fi-sr-tool-box"></i><span>Mis trabajos</span></a>
+                <a href="#" class="nav-item" data-tab="historial"><i class="fi fi-rr-clock"></i><span>Historial</span></a>
+                <a href="#" class="nav-item" data-tab="ruta"><i class="fi fi-rr-marker"></i><span>Mi ruta</span></a>
+                <a href="#" class="nav-item" data-tab="perfil"><i class="fi fi-rr-settings"></i><span>Mi perfil</span></a>
+            </nav>
+        </aside>
+
+        <main class="content">
+
+            <!-- Selector técnico (para demo) -->
+            <div class="tecnico-selector">
+                <label><strong>Sesión como técnico:</strong></label>
+                <select id="select-tecnico-activo" onchange="cambiarTecnico()"></select>
+                <span id="estado-disponible" class="service-status status-completed">Disponible</span>
+            </div>
+
+            <!-- Mis trabajos -->
+            <div id="tab-mis-trabajos">
+                <div class="content-header">
+                    <h1 id="saludo-tecnico">Mis trabajos de hoy</h1>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-card"><div class="num" id="stat-hoy">0</div><small>Hoy</small></div>
+                    <div class="stat-card"><div class="num" id="stat-encurso" style="color:var(--color-primary)">0</div><small>En curso</small></div>
+                    <div class="stat-card"><div class="num" id="stat-completados" style="color:var(--color-success)">0</div><small>Completados</small></div>
+                </div>
+                <div id="lista-trabajos"></div>
+            </div>
+
+            <!-- Historial -->
+            <div id="tab-historial" class="hidden">
+                <div class="content-header"><h1>Historial de trabajos</h1></div>
+                <div class="card">
+                    <table class="tabla-datos">
+                        <thead><tr><th>Fecha</th><th>Cliente</th><th>Tipo</th><th>Estado</th><th>Notas</th></tr></thead>
+                        <tbody id="tbody-historial"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Perfil -->
+            <div id="tab-perfil" class="hidden">
+                <div class="content-header"><h1>Opciones de perfil</h1></div>
+                <div class="card" style="max-width:520px">
+                    <div class="perfil-avatar-row">
+                        <img id="perfil-tecnico-preview" class="perfil-avatar-preview" src="" alt="Tu foto">
+                        <button type="button" class="btn-cambiar-foto" id="btn-abrir-avatar-tecnico">
+                            <i class="fi fi-rr-picture"></i> Cambiar foto
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre visible</label>
+                        <input type="text" id="perfil-nombre">
+                    </div>
+                    <button type="button" class="btn-primary" onclick="aplicarPerfilVisual()">
+                        <i class="fi fi-rr-check"></i> Aplicar (vista previa)
+                    </button>
+                    <p style="margin-top:1rem;font-size:0.8rem;color:var(--text-secondary)">La foto se guarda en este navegador. El nombre es solo vista previa en la sesión.</p>
+                </div>
+            </div>
+
+            <!-- Ruta del día -->
+            <div id="tab-ruta" class="hidden">
+                <div class="content-header"><h1>Mi ruta de hoy</h1></div>
+                <div class="card">
+                    <div id="mapa-tecnico" style="height:350px;border-radius:10px;margin-bottom:1.5rem"></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+                        <h3 style="margin:0">Paradas ordenadas</h3>
+                        <span id="distancia-total" style="font-size:0.85rem;color:var(--text-secondary)">—</span>
+                    </div>
+                    <ol id="ruta-tecnico" style="padding-left:1.5rem"></ol>
+                </div>
+            </div>
+
+    </div>
+
+
+    <!-- Selector de avatar técnico -->
+    <div id="modal-avatar-picker-tecnico" class="avatar-picker-overlay hidden">
+        <div class="modal modal-avatar-picker">
+            <div class="modal-header">
+                <h3>Selecciona una imagen</h3>
+                <button type="button" class="btn-close" id="avatar-tecnico-close"><i class="fi fi-rr-cross"></i></button>
+            </div>
+            <input type="file" id="avatar-tecnico-input" accept="image/*" hidden>
+            <button type="button" class="avatar-picker-upload" id="avatar-tecnico-upload">
+                <i class="fi fi-rr-cloud-upload"></i>
+                <span>Subir imagen</span>
+                <small>JPG, PNG o WebP · máx. 5 MB</small>
+            </button>
+            <div class="avatar-historial-seccion">
+                <h4>Avatares recientes</h4>
+                <p>Accede a tus 6 fotos de perfil más recientes</p>
+                <div id="avatar-tecnico-historial" class="avatar-historial-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="../js/store.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        const _user = Auth.requireRole('tecnico');
+        if (_user) {
+            Auth.inyectarTopbar('avatar-trabajador', null);
+            document.addEventListener('DOMContentLoaded', () => {
+                if (_user.tecnicoId) {
+                    const sel = document.getElementById('select-tecnico-activo');
+                    if (sel) { sel.value = _user.tecnicoId; cambiarTecnico(); }
+                }
+            });
+        }
+    </script>
+    <script src="../js/avatar-picker.js"></script>
+    <script src="../js/trabajador.js"></script>
+
+</body>
+</html>
+

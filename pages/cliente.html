@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitar servicio — HomeTech</title>
+    <link rel="icon" type="image/x-icon" href="../assets/hometech-logo.ico">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="../css/portal.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="logo-placeholder">
+            <img src="../assets/hometech-logo.ico" alt="HomeTech" class="logo-img">
+            <span>HomeTech SAT</span>
+        </div>
+        <a href="portal-cliente.html" style="color:var(--color-primary);text-decoration:none;font-size:0.9rem">
+            <i class="fi fi-rr-user"></i> Mi portal
+        </a>
+    </header>
+
+    <main class="main-content">
+
+        <!-- Si ya tiene un ticket -->
+        <div id="vista-seguimiento" class="hidden">
+            <section class="welcome-banner" style="margin-bottom:2rem">
+                <div class="welcome-text">
+                    <h1>Tu solicitud fue enviada ✅</h1>
+                    <p>Te hemos asignado un número de ticket. Guárdalo para hacer seguimiento.</p>
+                </div>
+                <div class="welcome-icon"><i class="fi fi-sr-check-circle"></i></div>
+            </section>
+
+            <div class="card" style="max-width:600px;margin:0 auto">
+                <div style="text-align:center;padding:1rem 0">
+                    <p style="color:var(--text-secondary);margin-bottom:0.5rem">Número de ticket</p>
+                    <div id="numero-ticket" style="font-size:2.5rem;font-weight:700;color:var(--color-primary)">—</div>
+                    <p style="color:var(--text-secondary);margin-top:0.5rem;font-size:0.9rem">Guarda este número para hacer seguimiento</p>
+                </div>
+                <div id="detalle-ticket" style="background:var(--bg-main);border-radius:10px;padding:1.25rem;margin:1rem 0"></div>
+                <button class="btn-primary btn-full" onclick="nuevaSolicitud()">
+                    <i class="fi fi-rr-plus"></i> Enviar otra solicitud
+                </button>
+                <button class="btn-secondary btn-full" style="margin-top:0.75rem" onclick="irASeguimiento()">
+                    <i class="fi fi-rr-search"></i> Consultar estado por ticket
+                </button>
+            </div>
+        </div>
+
+        <!-- Formulario principal -->
+        <div id="vista-formulario">
+            <div style="text-align:center;margin-bottom:2rem">
+                <h1 style="font-size:2rem;font-weight:700;margin-bottom:0.5rem">Solicita un servicio técnico</h1>
+                <p style="color:var(--text-secondary)">Rellena el formulario y nos pondremos en contacto contigo lo antes posible</p>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;max-width:1000px;margin:0 auto">
+
+                <!-- Formulario -->
+                <div class="card">
+                    <h2 style="font-size:1.2rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem">
+                        <i class="fi fi-rr-document" style="color:var(--color-primary)"></i>
+                        Nueva solicitud
+                    </h2>
+                    <form id="form-sat">
+                        <div class="form-group">
+                            <label>Tu nombre completo *</label>
+                            <input type="text" id="sat-nombre" placeholder="Juan Pérez" required>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                            <div class="form-group">
+                                <label>Teléfono *</label>
+                                <input type="tel" id="sat-telefono" placeholder="600 000 000" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="sat-email" placeholder="tu@email.com">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Dirección del servicio *</label>
+                            <input type="text" id="sat-direccion" placeholder="Calle, número, ciudad" required>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                            <div class="form-group">
+                                <label>Tipo de servicio *</label>
+                                <select id="sat-tipo" required>
+                                    <option value="">Selecciona...</option>
+                                    <option>Reparación de ordenadores</option>
+                                    <option>Mantenimiento de equipos</option>
+                                    <option>Montaje de equipos</option>
+                                    <option>Instalación de red</option>
+                                    <option>Reparación urgente</option>
+                                    <option>Revisión</option>
+                                    <option>Otro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Urgencia</label>
+                                <select id="sat-urgencia">
+                                    <option value="baja">Baja — en días</option>
+                                    <option value="media" selected>Media — esta semana</option>
+                                    <option value="alta">Alta — hoy / mañana</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Describe el problema *</label>
+                            <textarea id="sat-descripcion" rows="4" placeholder="Explícanos con detalle qué necesitas o qué avería tienes..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>¿Tienes disponibilidad preferida?</label>
+                            <input type="text" id="sat-disponibilidad" placeholder="Ej: mañanas, tardes, fines de semana...">
+                        </div>
+                        <button type="submit" class="btn-primary btn-full" style="margin-top:0.5rem">
+                            <i class="fi fi-rr-paper-plane"></i> Enviar solicitud
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Info lateral -->
+                <div>
+                    <div class="card" style="margin-bottom:1.5rem">
+                        <h3 style="margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem">
+                            <i class="fi fi-rr-info" style="color:var(--color-primary)"></i>
+                            ¿Cómo funciona?
+                        </h3>
+                        <div class="paso">
+                            <div class="paso-num">1</div>
+                            <div><strong>Envías tu solicitud</strong><p>Rellena el formulario con tus datos y describe el problema.</p></div>
+                        </div>
+                        <div class="paso">
+                            <div class="paso-num">2</div>
+                            <div><strong>Te asignamos un técnico</strong><p>Nuestro equipo revisa tu solicitud y asigna al técnico más adecuado.</p></div>
+                        </div>
+                        <div class="paso">
+                            <div class="paso-num">3</div>
+                            <div><strong>El técnico te contacta</strong><p>El técnico se pone en contacto contigo para confirmar la cita.</p></div>
+                        </div>
+                        <div class="paso">
+                            <div class="paso-num">4</div>
+                            <div><strong>Servicio realizado</strong><p>Completamos el trabajo y recibes tu factura.</p></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem">
+                            <i class="fi fi-rr-search" style="color:var(--color-primary)"></i>
+                            Consultar estado
+                        </h3>
+                        <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:1rem">
+                            Si ya tienes un número de ticket, consulta el estado de tu solicitud.
+                        </p>
+                        <div style="display:flex;gap:0.75rem">
+                            <input type="number" id="ticket-consulta" placeholder="Nº de ticket" style="flex:1;padding:0.625rem 0.875rem;border:1px solid var(--border-color);border-radius:8px;font-size:0.9rem">
+                            <button class="btn-primary" onclick="consultarTicket()">
+                                <i class="fi fi-rr-search"></i>
+                            </button>
+                        </div>
+                        <div id="resultado-consulta" style="margin-top:1rem"></div>
+                    </div>
+
+                    <div class="card" style="margin-top:1.5rem">
+                        <h3 style="margin-bottom:1rem">Contacto directo</h3>
+                        <a href="tel:+34900000000" class="btn-contacto btn-tel" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.875rem;background:#dbeafe;color:#2563eb;border-radius:10px;text-decoration:none;font-weight:600;margin-bottom:0.75rem">
+                            <i class="fi fi-rr-phone-call"></i> Llamar ahora: 900 000 000
+                        </a>
+                        <a href="https://wa.me/34600000000" target="_blank" class="btn-contacto btn-whatsapp" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.875rem;background:#d1fae5;color:#059669;border-radius:10px;text-decoration:none;font-weight:600">
+                            <i class="fi fi-rr-comment"></i> WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>© 2026 HomeTech — Servicio de asistencia técnica</p>
+    </footer>
+
+    <style>
+        .form-group { margin-bottom:1rem; }
+        .form-group label { display:block; font-weight:600; font-size:0.85rem; margin-bottom:0.35rem; }
+        .form-group input, .form-group select, .form-group textarea {
+            width:100%; padding:0.625rem 0.875rem; border:1px solid #e5e7eb;
+            border-radius:8px; font-size:0.9rem; font-family:inherit; transition:border-color 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline:none; border-color:var(--color-primary, #f59e0b);
+        }
+        .btn-full { width:100%; justify-content:center; }
+        .paso { display:flex; gap:1rem; align-items:flex-start; margin-bottom:1.25rem; }
+        .paso:last-child { margin-bottom:0; }
+        .paso-num { width:32px; height:32px; border-radius:50%; background:var(--color-primary,#f59e0b); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0; }
+        .paso p { color:#6b7280; font-size:0.9rem; margin-top:0.2rem; }
+        @media(max-width:768px) { div[style*="grid-template-columns:1fr 1fr"] { grid-template-columns:1fr !important; } }
+    </style>
+
+    <script src="../js/store.js"></script>
+    <script>
+    document.getElementById('form-sat').addEventListener('submit', e => {
+        e.preventDefault();
+        const solicitud = {
+            nombre:        document.getElementById('sat-nombre').value,
+            telefono:      document.getElementById('sat-telefono').value,
+            email:         document.getElementById('sat-email').value,
+            direccion:     document.getElementById('sat-direccion').value,
+            tipo:          document.getElementById('sat-tipo').value,
+            urgencia:      document.getElementById('sat-urgencia').value,
+            descripcion:   document.getElementById('sat-descripcion').value,
+            disponibilidad:document.getElementById('sat-disponibilidad').value
+        };
+        const nueva = Store.addSolicitud(solicitud);
+
+        document.getElementById('numero-ticket').textContent = '#' + String(nueva.id).padStart(5, '0');
+        document.getElementById('detalle-ticket').innerHTML = `
+            <p style="margin-bottom:0.5rem"><strong>Nombre:</strong> ${nueva.nombre}</p>
+            <p style="margin-bottom:0.5rem"><strong>Tipo:</strong> ${nueva.tipo}</p>
+            <p style="margin-bottom:0.5rem"><strong>Urgencia:</strong> ${nueva.urgencia}</p>
+            <p style="margin-bottom:0.5rem"><strong>Descripción:</strong> ${nueva.descripcion}</p>
+            <p style="margin-bottom:0"><strong>Estado:</strong> <span style="color:#f59e0b;font-weight:600">Pendiente de asignación</span></p>
+        `;
+        document.getElementById('vista-formulario').classList.add('hidden');
+        document.getElementById('vista-seguimiento').classList.remove('hidden');
+    });
+
+    function nuevaSolicitud() {
+        document.getElementById('form-sat').reset();
+        document.getElementById('vista-seguimiento').classList.add('hidden');
+        document.getElementById('vista-formulario').classList.remove('hidden');
+    }
+
+    function consultarTicket() {
+        const id = parseInt(document.getElementById('ticket-consulta').value);
+        const sol = Store.getSolicitudes().find(s => s.id === id);
+        const res = document.getElementById('resultado-consulta');
+        if (!sol) {
+            res.innerHTML = `<div style="background:#fee2e2;color:#dc2626;padding:0.75rem;border-radius:8px;font-size:0.9rem">❌ No se encontró ningún ticket con ese número</div>`;
+            return;
+        }
+        const estadoColor = { nueva: '#f59e0b', asignada: '#6366f1', rechazada: '#ef4444' };
+        const estadoLabel = { nueva: 'Pendiente de asignación', asignada: 'Técnico asignado', rechazada: 'Rechazada' };
+        const tecnico = sol.tecnicoId ? Store.getTecnico(sol.tecnicoId) : null;
+        res.innerHTML = `
+            <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:1rem;font-size:0.9rem">
+                <p style="margin-bottom:0.4rem"><strong>Ticket:</strong> #${String(sol.id).padStart(5,'0')}</p>
+                <p style="margin-bottom:0.4rem"><strong>Tipo:</strong> ${sol.tipo}</p>
+                <p style="margin-bottom:0.4rem"><strong>Estado:</strong>
+                    <span style="color:${estadoColor[sol.estado]};font-weight:600">${estadoLabel[sol.estado]}</span>
+                </p>
+                ${tecnico ? `<p style="margin-bottom:0"><strong>Técnico asignado:</strong> ${tecnico.nombre}</p>` : ''}
+            </div>`;
+    }
+
+    function irASeguimiento() {
+        document.getElementById('vista-seguimiento').classList.add('hidden');
+        document.getElementById('vista-formulario').classList.remove('hidden');
+        document.getElementById('ticket-consulta').focus();
+    }
+    </script>
+</body>
+</html>
