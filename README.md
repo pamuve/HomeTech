@@ -190,27 +190,6 @@ Cliente rellena formulario público
 
 ---
 
-## ⚙️ Cómo ejecutar el proyecto
-
-No requiere instalación ni servidor de Node. Basta con abrir el proyecto en un servidor local (por CORS con Leaflet):
-
-```bash
-# Opción 1 — VS Code Live Server
-# Instala la extensión Live Server y haz clic en "Go Live"
-
-# Opción 2 — Python
-python -m http.server 8080
-
-# Opción 3 — Node
-npx serve .
-```
-
-Luego abre `http://localhost:8080` en tu navegador.
-
-> ⚠️ **Nota:** Los datos de demo se cargan automáticamente en el primer acceso. Si algo falla, usa el botón **"Resetear datos de demo"** en la pantalla de login.
-
----
-
 ## 📁 Datos de demo incluidos
 
 - **3 técnicos** con especialidades distintas y servicios asignados
